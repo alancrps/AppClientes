@@ -1,6 +1,5 @@
-import { clientesdb } from "./assets/cliente";
-import { ICliente } from "./assets/interfaces/cliente.interface";
-import { crearCliente } from "./assets/services/cliente.service";
+import { ICliente } from "./cliente/interfaces/cliente.interface";
+import { crearCliente } from "./cliente/services/cliente.service";
 
 const logo = document.querySelector<HTMLAnchorElement>("#logo");
 const main = document.querySelector<HTMLDivElement>("#main");

@@ -3,6 +3,8 @@ import { ICliente } from "../interfaces/cliente.interface";
 
 const URL = "https://api-user-production.up.railway.app";
 
+export const getClientes = async () => {};
+
 export const crearCliente = async (cliente: ICliente) => {
 	const response = await axios.post(`${URL}/usuarios`, cliente);
 	const data: ICliente = response.data;
