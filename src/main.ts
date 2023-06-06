@@ -1,5 +1,6 @@
 import { ICliente } from "./cliente/interfaces/cliente.interface";
-import { crearCliente } from "./cliente/services/cliente.service";
+import { crearCliente, getClientes } from "./cliente/services/cliente.service";
+import { generarTablaClientes } from "./cliente/tablaUsuario";
 
 const logo = document.querySelector<HTMLAnchorElement>("#logo");
 const main = document.querySelector<HTMLDivElement>("#main");
@@ -73,6 +74,7 @@ crearClientes?.addEventListener("click", () => {
             class="row p-4 pb-0 pe-lg-0 pt-lg-5 justify-content-start align-items-center rounded-3 border shadow-lg"
         >
             <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+            <form id="formulario">
                 <h1 class="display-6 fw-bold lh-1 text-body-emphasis mb-5">
                 Crear Cliente:
                 </h1>
@@ -151,13 +153,15 @@ crearClientes?.addEventListener("click", () => {
                         Guardar
                     </button>
                     <button
+                        id="cancelarButton"
                         type="button"
                         class="btn btn-outline-danger btn-sm"
                     >
                         Cancelar
                     </button>
                     </div>
-            </div>
+                </div>
+            </form>
             <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden">
             <img
                 class="crearClienteImg"
@@ -165,14 +169,13 @@ crearClientes?.addEventListener("click", () => {
                 alt=""
                 width="100%"
             />
-        </div>
+            </div>
         </div>
     </div>
     `;
 	//Escuchar evento del boton
 	const guardarButtonInput =
 		document.querySelector<HTMLButtonElement>("#guardarButton");
-
 	guardarButtonInput?.addEventListener("click", (e) => {
 		e.preventDefault();
 		const cargaDeCliente: ICliente = cargarInputs();
@@ -186,12 +189,29 @@ crearClientes?.addEventListener("click", () => {
 			});
 		}
 	});
+	const cancelarButtonInput =
+		document.querySelector<HTMLButtonElement>("#cancelarButton");
+	const formulario = document.querySelector<HTMLFormElement>("#formulario");
+	cancelarButtonInput?.addEventListener("click", (e) => {
+		e.preventDefault();
+		formulario?.reset();
+	});
 });
 
-clientes?.addEventListener("click", () => {
+clientes?.addEventListener("click", async () => {
 	main!.innerHTML = `
-    <p>proximamente...</p>
+    <div class="container my-5">
+        <div
+            class="row rounded-3 border shadow-lg"
+        >
+            <div id="divTablaClientes" class="table-responsive"></div>
+        </div>
+    </div>
+
     `;
+	const divTabla = document.querySelector<HTMLDivElement>("#divTablaClientes")!;
+	const clientes = await getClientes();
+	generarTablaClientes(clientes, divTabla);
 });
 
 const cargarInputs = () => {
@@ -230,7 +250,6 @@ function validar(cliente: ICliente) {
 		cliente.numeroTelefono == 0 ||
 		cliente.direccion.length == 0 ||
 		cliente.cuitCuil.length == 0 ||
-		//falta validar pais si no hay ninguna opción seleccionada
 		cliente.localidad.length == 0 ||
 		cliente.codPostal.length == 0 ||
 		cliente.empresa.length == 0
@@ -250,7 +269,7 @@ function validar(cliente: ICliente) {
 	if (cliente.direccion.length < 3 || cliente.direccion.length >= 30) {
 		err.push("Campo direccion debe contener entre 3 y 30 carácteres");
 	}
-	if (cliente.cuitCuil.toString().length !== 11) {
+	if (cliente.cuitCuil.length !== 11) {
 		err.push("Campo cuit debe contener 11 carácteres Ej: 20393235222");
 	}
 	if (cliente.localidad.length < 3 || cliente.localidad.length >= 18) {
@@ -262,7 +281,11 @@ function validar(cliente: ICliente) {
 	if (cliente.empresa.length < 3 || cliente.empresa.length > 18) {
 		err.push("Campo empresa debe contener entre 3 y 18 carácteres");
 	}
+	if (cliente.pais == "default") {
+		err.push("Debe seleccionar un pais");
+	}
 	return err;
 }
 
 //Hacer que los alerts de las validaciones se muestren en los span de clase input-helper
+//agregar form
