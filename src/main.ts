@@ -200,7 +200,7 @@ crearClientes?.addEventListener("click", () => {
 
 clientes?.addEventListener("click", async () => {
 	main!.innerHTML = `
-    <div class="container my-5">
+    <div class="container pt-5">
         <div
             class="row rounded-3 border shadow-lg"
         >
